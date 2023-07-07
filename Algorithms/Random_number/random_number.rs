@@ -9,7 +9,7 @@ fn main() {
     let n1: u8 = rng.gen();
     //uint16 범위의 랜덤 숫자 리턴
     let n2: u16 = rng.gen();
-    //!는 매크로로 코드의 약자같은 역할
+    //"!"는 매크로로 코드의 약자같은 역할
     //{}는 C언어의 %d, %f같은 역할
     println!("Random u8: {}", n1);
     

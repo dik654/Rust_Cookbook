@@ -1,0 +1,32 @@
+use lazy_static::lazy_static;
+use std::sync::Mutex;
+
+lazy_static! {
+    // Mutex로 동시 접근 방지
+    static ref FRUIT: Mutex::<Vec<String>> = Mutex::New(Vec::new());
+}
+
+fn insert(fruit: &str) -> Result<()> {
+    // lock으로 접근권한(MutexGuard)을 얻고 동시 접근 막기
+    // map_err는 접근권한을 얻지 못한다면 Err값을 반환
+    let mut db = FRUIT.lock().map_err(|_| "Failed to acquire MutexGuard")?;
+    // 인수로 들어온 string을 vector에 저장
+    db.push(fruit.to_string());
+    // 저장에 성공했다면 종료
+    Ok(())
+}
+
+fn main() -> Result<()> {
+    // "?"을 이용해 Err를 반환하면 패닉
+    insert("apple")?;
+    insert("orange")?;
+    insert("peach")?;
+    {
+        // 접근권한을 얻고
+        let db = FRUIT.lock().map_err(|_| "Failed to acquire MutexGuard")?;
+        // vector에 저장된 값들 차례대로 print
+        db.iter().enumerate().for_each(|(i, item)| println!("{}: {}", i, item));
+    }
+    insert("grape")?;
+    Ok(())
+}
